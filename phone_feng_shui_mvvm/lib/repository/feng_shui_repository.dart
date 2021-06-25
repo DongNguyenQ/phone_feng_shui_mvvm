@@ -7,7 +7,7 @@ class FengShuiRepository {
   final _mobileNetworkFilePath = 'assets/res/mobile_network.json';
   final _nicePairsNumberFilePath = 'assets/res/nice_pair_numbers.txt';
 
-  Future<List<String>> getFengShuiNumbers() async {
+  Future<List<String>> getTabooNumbers() async {
     final list = _localService.loadAssetAsList(_fengShuiFilePath);
     return list;
   }

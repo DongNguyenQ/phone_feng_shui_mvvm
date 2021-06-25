@@ -57,30 +57,36 @@ class HomeViewModel {
   );
 
   Future<void> qualifyPhone(String phone) async {
-    final data = await _fengShuiRepository.getFengShuiNumbers();
-    FengShuiNumberQuality result = Helper.validateTabooNumber(phone, data);
-    if (result.isGood) {
+    FengShuiNumberQuality numberQuality = new FengShuiNumberQuality(
+          true, message: '$phone is good feng shui number.', phone: phone);
+
+    final tabooNumbers = await _fengShuiRepository.getTabooNumbers();
+    final isMatchedTaboo = Helper.findMatchNumberInAList(
+        phone.substring(phone.length - 2), tabooNumbers);
+    if (isMatchedTaboo) {
+      numberQuality.isGood = false;
+      numberQuality.message = 'Bad fend shui number - Match taboo number $tabooNumbers';
+    } else {
       final caculatedNumber =
           Helper.calculateTotalOfAString(phone.substring(0, 5)) /
               Helper.calculateTotalOfAString(phone.substring(5));
-      print('phone.substring(5) : ${phone.substring(5)} : '
-          '${Helper.calculateTotalOfAString(phone.substring(0, 5))}');
-      print('phone.substring(0, 5) : ${phone.substring(0, 5)} : '
-          '${Helper.calculateTotalOfAString(phone.substring(5))}');
-      if (caculatedNumber == 24/29 || caculatedNumber == 24/28) {
+      if (caculatedNumber != 24/29 && caculatedNumber != 24/28) {
+        numberQuality.isGood = false;
+        numberQuality.message = 'Bad fend shui number - First 5 (${Helper.calculateTotalOfAString(phone.substring(0, 5))}) '
+                '/ last 5 (${Helper.calculateTotalOfAString(phone.substring(5))}) '
+                '-> not equal 24/29 or 24/28';
+      } else {
         final nicePairs = await _fengShuiRepository.getNicePairNumbers();
         final compareNumber = phone.substring(phone.length - 2);
         final isFound = Helper.findMatchNumberInAList(compareNumber, nicePairs);
         if (!isFound) {
-          result.isGood = false;
-          result.message = 'Not match any nice pair : $nicePairs';
+          numberQuality.isGood = false;
+          numberQuality.message = 'Bad fend shui number - Not match any nice pair : $nicePairs';
         }
-      } else {
-        result.isGood = false;
-        result.message = 'First 5 devide last 5 not equal 24/29 or 24/28';
       }
     }
-    qualitySink.add(result);
+    print('MESSAGE : ${numberQuality.message}');
+    qualitySink.add(numberQuality);
   }
 
   // Future<void> findMobileNetwork(String phone) async {

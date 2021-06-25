@@ -63,13 +63,13 @@ class Helper {
   }
 
   static FengShuiNumberQuality validateTabooNumber(
-      String phone, List<String> fengShuiNumbers) {
+      String phone, List<String> tabooNumbers) {
     FengShuiNumberQuality result = new FengShuiNumberQuality(
         true, message: '$phone is good feng shui number.', phone: phone);
-    if (fengShuiNumbers != null) {
-      for (var number in fengShuiNumbers) {
+    if (tabooNumbers != null) {
+      for (var number in tabooNumbers) {
         if (number == phone.substring(phone.length - 2)) {
-          result.message = 'Bad fend shui number.';
+          result.message = 'Bad fend shui number. Match taboo number $tabooNumbers';
           result.isGood = false;
           return result;
         }
