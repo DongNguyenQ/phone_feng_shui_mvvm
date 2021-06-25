@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
 import 'package:phone_feng_shui_mvvm/utils/helper.dart';
 
 class LocalService {
@@ -15,5 +16,13 @@ class LocalService {
     }
     numbers.toSet().toList();
     return numbers;
+  }
+
+  Future<List<MobileNetworkEntity>> loadMobileNetworksFromLocal(String url) async {
+    final data = await rootBundle.loadString(url);
+    final networks = List<MobileNetworkEntity>.
+          from(json.decode(data).map((model)=>
+              MobileNetworkEntity.fromJson(model)));
+    return networks;
   }
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "102132456",
+    "name": "viettel",
+    "logo": "assets/viettel_logo.jpg",
+    "detector": ["086", "096", "097"]
+  },
+  {
+    "id": "102132457",
+    "name": "mobiphone",
+    "logo": "assets/mobiphone_logo.png",
+    "detector": ["089", "090", "093"]
+  },
+  {
+    "id": "102132458",
+    "name": "vinaphone",
+    "logo": "assets/vinaphone_logo.jpg",
+    "detector": ["088", "091", "094"]
+  }
+]

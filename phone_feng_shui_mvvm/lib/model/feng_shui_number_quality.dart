@@ -1,5 +1,6 @@
 class FengShuiNumberQuality {
-  final bool isGood;
-  final String? message;
-  FengShuiNumberQuality(this.isGood, {this.message});
+  bool isGood;
+  String? message;
+  String? phone;
+  FengShuiNumberQuality(this.isGood, {this.message, this.phone});
 }

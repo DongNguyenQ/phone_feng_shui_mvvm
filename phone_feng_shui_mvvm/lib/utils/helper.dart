@@ -1,4 +1,6 @@
+import 'package:phone_feng_shui_mvvm/model/feng_shui_number_quality.dart';
 import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Helper {
   static String? validate(String phone, List<MobileNetworkEntity> mobileNetworks) {
@@ -50,5 +52,29 @@ class Helper {
       converted.add(element.trim());
     }
     return converted;
+  }
+
+  static FengShuiNumberQuality validateQualityFengShuiNumber(
+      String phone, List<String> fengShuiNumbers) {
+    FengShuiNumberQuality result = new FengShuiNumberQuality(
+        true, message: '$phone is good feng shui number.', phone: phone);
+    if (fengShuiNumbers != null) {
+      for (var number in fengShuiNumbers) {
+        print('phone.substring(phone.length - 2) : ${phone.substring(phone.length - 2)}');
+        print('Number : $number');
+        print('IS MATCH : ${number == phone.substring(phone.length - 2)}');
+        if (number == phone.substring(phone.length - 2)) {
+          result.message = 'Bad fend shui number.';
+          result.isGood = false;
+          return result;
+        }
+      }
+    }
+    return result;
+  }
+
+  static makePhoneCall(String phone) {
+    final schema = 'tel:$phone';
+    launch(schema);
   }
 }

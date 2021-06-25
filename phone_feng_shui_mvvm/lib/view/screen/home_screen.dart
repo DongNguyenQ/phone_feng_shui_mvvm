@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:phone_feng_shui_mvvm/model/feng_shui_number_quality.dart';
 import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
+import 'package:phone_feng_shui_mvvm/utils/helper.dart';
 import 'package:phone_feng_shui_mvvm/view/widget/custom_input_view.dart';
 import 'package:phone_feng_shui_mvvm/viewmodel/home_viewmodel.dart';
 
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if(_controller.text.isNotEmpty) {
         _homeViewModel.phoneSink.add(_controller.text);
         _homeViewModel.networkSink.add(_controller.text);
+        _homeViewModel.resetStatusQualify();
       }
     });
   }
@@ -50,38 +53,54 @@ class _HomeScreenState extends State<HomeScreen> {
             StreamBuilder<String?>(
               stream: _homeViewModel.phoneStream,
               builder: (context, snapshot) {
-                return StreamBuilder<MobileNetworkEntity?>(
-                  stream: _homeViewModel.networkStream,
-                  builder: (context, snapshotMobileNetwork) {
-                    return CustomTextFormField(
+                return CustomTextFormField(
                       controller: _controller,
                       label: 'Phone number',
-                      prefix: (() {
-                        if (snapshotMobileNetwork.hasData) {
-                          return Container(
-                            height: 25,
-                            margin: EdgeInsets.only(right: 20, top: 20),
-                            width: 25,
-                              child: Image.asset(snapshotMobileNetwork.data!.logo),
-                          );
-                        }
-                        if (snapshot.hasData) {
-                          return Container(
+                      prefix: StreamBuilder<MobileNetworkEntity?>(
+                        stream: _homeViewModel.networkStream,
+                        builder: (context, snapshotMobileNetwork) {
+                          if (snapshotMobileNetwork.hasData) {
+                            return Container(
                               height: 25,
                               margin: EdgeInsets.only(right: 20, top: 20),
                               width: 25,
-                              child: CircularProgressIndicator(color: Colors.black, strokeWidth: 1.5));
-                        }
-                        return SizedBox();
-                      } ()),
-                      errorText: snapshot.data is String ? snapshot.data : '',
+                              child: Image.asset(snapshotMobileNetwork.data!.logo),
+                            );
+                          }
+                          if (snapshot.hasData) {
+                            return Container(
+                                height: 25,
+                                margin: EdgeInsets.only(right: 20, top: 20),
+                                width: 25,
+                                child: CircularProgressIndicator(color: Colors.black, strokeWidth: 1.5));
+                          }
+                          return SizedBox();
+                        },
+                      ),
+                      errorText: snapshot.data is String
+                          ? snapshot.data : '',
                       formatters: [
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(10)
                       ],
                     );
                   },
-                );
+            ),
+            StreamBuilder<FengShuiNumberQuality?>(
+              stream: _homeViewModel.qualityStream,
+              builder: (context, snapshotQuality) {
+                final _isQualified = snapshotQuality.hasData &&
+                        snapshotQuality.data!.isGood;
+                return snapshotQuality.hasData ? GestureDetector(
+                  onTap: _isQualified ? () {
+                    call(snapshotQuality.data!.phone!);
+                  } : () {},
+                  child: Text(snapshotQuality.data!.message!,
+                    style: TextStyle(
+                      color: snapshotQuality.data!.isGood ? Colors.green : Colors.red
+                    ),
+                  ),
+                ) : SizedBox();
               },
             ),
             SizedBox(height: 30),
@@ -101,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text('Submit', style: TextStyle(
                       color: _isEnable ? Colors.grey : Colors.white),),
                   onPressed: _isEnable ? null : () {
-                    _homeViewModel.validateQualityFengShuiNumber(_controller.text);
+                    _homeViewModel.qualifyPhone(_controller.text);
                   },
                   color: Colors.black,
                 );
@@ -112,5 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void call(String number) {
+    print('CCALLING $number');
+    Helper.makePhoneCall(number);
   }
 }
