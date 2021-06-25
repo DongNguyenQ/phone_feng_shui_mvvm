@@ -65,7 +65,7 @@ class HomeViewModel {
         phone.substring(phone.length - 2), tabooNumbers);
     if (isMatchedTaboo) {
       numberQuality.isGood = false;
-      numberQuality.message = 'Bad fend shui number - Match taboo number $tabooNumbers';
+      numberQuality.message = 'Bad fend shui number - Match taboo number \n $tabooNumbers';
     } else {
       final caculatedNumber =
           Helper.calculateTotalOfAString(phone.substring(0, 5)) /
@@ -74,26 +74,20 @@ class HomeViewModel {
         numberQuality.isGood = false;
         numberQuality.message = 'Bad fend shui number - First 5 (${Helper.calculateTotalOfAString(phone.substring(0, 5))}) '
                 '/ last 5 (${Helper.calculateTotalOfAString(phone.substring(5))}) '
-                '-> not equal 24/29 or 24/28';
+                '\n -> not equal 24/29 or 24/28';
       } else {
         final nicePairs = await _fengShuiRepository.getNicePairNumbers();
         final compareNumber = phone.substring(phone.length - 2);
         final isFound = Helper.findMatchNumberInAList(compareNumber, nicePairs);
         if (!isFound) {
           numberQuality.isGood = false;
-          numberQuality.message = 'Bad fend shui number - Not match any nice pair : $nicePairs';
+          numberQuality.message = 'Bad fend shui number - Not match any nice pair \n $nicePairs';
         }
       }
     }
     print('MESSAGE : ${numberQuality.message}');
     qualitySink.add(numberQuality);
   }
-
-  // Future<void> findMobileNetwork(String phone) async {
-  //   final networks = await _fengShuiRepository.getMobileNetworks();
-  //   final result = Helper.findMatchMobileNetworkInListNetwork(phone, networks);
-  //
-  // }
 
   void resetStatusQualify() {
     qualitySink.add(null);

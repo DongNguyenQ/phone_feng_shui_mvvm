@@ -28,13 +28,16 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: obscure!,
       controller: controller,
       decoration: InputDecoration(
-          errorText: errorText ?? '',
+          errorText: errorText ?? null,
           errorStyle: errorStyle ?? null,
           hintText: hint ?? '',
           labelText: label ?? '',
           prefix: prefix ?? null,
           labelStyle: TextStyle(color: Colors.black),
           focusColor: Colors.black,
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.black),
           ),

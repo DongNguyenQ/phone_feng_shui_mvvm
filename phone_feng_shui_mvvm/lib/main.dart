@@ -11,13 +11,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Feng Shui Number',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.black,
         primaryColorBrightness: Brightness.light,
-        primaryColorDark: Colors.black,
-        primaryColorLight: Colors.black,
-        primaryTextTheme: TextTheme(),
-        textTheme: TextTheme(),
+        primaryTextTheme: TextTheme(
+          caption: TextStyle(color: Colors.white),
+          headline6: TextStyle(color: Colors.white),
+        ),
+        textTheme: TextTheme(
+          caption: TextStyle(color: Colors.white)
+        ),
         // primarySwatch: Colors.blue,
       ),
       home: HomeScreen(),
