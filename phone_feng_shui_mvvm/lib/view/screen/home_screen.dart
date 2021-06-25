@@ -59,13 +59,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         prefix: StreamBuilder<MobileNetworkEntity?>(
                           stream: _homeViewModel.networkStream,
                           builder: (context, snapshotMobileNetwork) {
+                            print('snapshotMobileNetwork : ${snapshotMobileNetwork.data}');
                             if (snapshotMobileNetwork.hasData) {
-                              return Container(
-                                height: 25,
-                                margin: EdgeInsets.only(right: 20, top: 20),
-                                width: 25,
-                                child: Image.asset(snapshotMobileNetwork.data!.logo),
-                              );
+                              if (snapshotMobileNetwork.data != null) {
+                                return Container(
+                                  height: 25,
+                                  margin: EdgeInsets.only(right: 20, top: 20),
+                                  width: 25,
+                                  child: Image.asset(snapshotMobileNetwork.data!.logo),
+                                );
+                              }
+                              return SizedBox();
                             }
                             if (snapshot.hasData) {
                               return Container(

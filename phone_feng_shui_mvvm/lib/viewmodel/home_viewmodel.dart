@@ -11,13 +11,8 @@ class HomeViewModel {
 
   final _phoneStatusSubject = BehaviorSubject<String>();
   final _btnSubject = BehaviorSubject<bool>();
-  final _networkSubject = BehaviorSubject<String>();
+  final _networkSubject = BehaviorSubject<MobileNetworkEntity?>();
   final _fengShuiRepository = FengShuiRepository();
-  static List<MobileNetworkEntity> mobileNetworks = [
-    new MobileNetworkEntity('102132456', 'viettel', 'assets/viettel_logo.jpg', ['086', '096', '097']),
-    new MobileNetworkEntity('102132457', 'mobiphone', 'assets/mobiphone_logo.png', ['089', '090', '093']),
-    new MobileNetworkEntity('102132458', 'vinaphone', 'assets/vinaphone_logo.jpg', ['088', '091', '094']),
-  ];
 
   List<MobileNetworkEntity>? _mobileNetworksFromRepository;
 
@@ -32,15 +27,8 @@ class HomeViewModel {
   Sink<bool> get btnSink => _btnSubject.sink;
 
   Stream<MobileNetworkEntity?> get networkStream =>
-          _networkSubject.stream.transform(_networkValidation);
-  Sink<String> get networkSink => _networkSubject.sink;
-
-  StreamTransformer<String, MobileNetworkEntity?> _networkValidation
-      = StreamTransformer<String, MobileNetworkEntity?>.fromHandlers(
-      handleData: (data, sink) {
-        sink.add(Helper.findMatchMobileNetworkInListNetwork(data, mobileNetworks));
-      }
-  );
+          _networkSubject.stream;
+  Sink<MobileNetworkEntity?> get networkSink => _networkSubject.sink;
 
   Future<void> qualifyPhone(String phone) async {
     FengShuiNumberQuality numberQuality = new FengShuiNumberQuality(
@@ -84,7 +72,13 @@ class HomeViewModel {
       } else {
         btnSink.add(false);
       }
-      networkSink.add(value);
+      if (value.length >= 3) {
+        dynamic foundNetwork = Helper.findMatchMobileNetworkInListNetwork(value, _mobileNetworksFromRepository!);
+        networkSink.add(foundNetwork);
+      } else {
+        networkSink.add(null);
+      }
+
     });
   }
 
