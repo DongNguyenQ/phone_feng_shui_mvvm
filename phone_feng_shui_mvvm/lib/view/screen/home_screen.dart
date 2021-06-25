@@ -26,8 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _controller.addListener(() {
       if(_controller.text.isNotEmpty) {
         _homeViewModel.phoneSink.add(_controller.text);
-        _homeViewModel.networkSink.add(_controller.text);
-        _homeViewModel.resetStatusQualify();
       }
     });
   }
@@ -79,8 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             return SizedBox();
                           },
                         ),
-                        errorText: snapshot.data is String
-                            ? snapshot.data : null,
                         formatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(10)
@@ -89,22 +85,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
               ),
               SizedBox(height: 30),
-              StreamBuilder<FengShuiNumberQuality?>(
-                stream: _homeViewModel.qualityStream,
-                builder: (context, snapshotQuality) {
-                  final _isQualified = snapshotQuality.hasData &&
-                          snapshotQuality.data!.isGood;
-                  return snapshotQuality.hasData ? GestureDetector(
-                    onTap: _isQualified ? () {
-                      call(snapshotQuality.data!.phone!);
-                    } : () {},
-                    child: Text(snapshotQuality.data!.message!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: snapshotQuality.data!.isGood ? Colors.green : Colors.red
-                      ),
-                    ),
-                  ) : SizedBox();
+              StreamBuilder<dynamic>(
+                stream: _homeViewModel.readyStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data is FengShuiNumberQuality) {
+                      final data = snapshot.data as FengShuiNumberQuality;
+                      if (data.isGood) {
+                        return GestureDetector(
+                          onTap: () {call(data.phone!);},
+                          child: Text(
+                            data.message!,
+                            style: TextStyle(color: Colors.green),
+                          ),
+                        );
+                      } else {
+                        return Text(
+                          data.message!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red),
+                        );
+                      }
+                    }
+                    return Text(snapshot.data, style: TextStyle(color: Colors.red));
+                  }
+                  return SizedBox();
                 },
               ),
               SizedBox(height: 30),
@@ -139,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void call(String number) {
-    print('CCALLING $number');
     Helper.makePhoneCall(number);
   }
 }

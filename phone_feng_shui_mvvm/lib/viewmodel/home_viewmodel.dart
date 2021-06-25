@@ -7,10 +7,11 @@ import 'package:phone_feng_shui_mvvm/utils/helper.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeViewModel {
+  final _onReadySubject = BehaviorSubject<dynamic>();
+
   final _phoneStatusSubject = BehaviorSubject<String>();
   final _btnSubject = BehaviorSubject<bool>();
   final _networkSubject = BehaviorSubject<String>();
-  final _qualitySubject = BehaviorSubject<FengShuiNumberQuality?>();
   final _fengShuiRepository = FengShuiRepository();
   static List<MobileNetworkEntity> mobileNetworks = [
     new MobileNetworkEntity('102132456', 'viettel', 'assets/viettel_logo.jpg', ['086', '096', '097']),
@@ -18,23 +19,14 @@ class HomeViewModel {
     new MobileNetworkEntity('102132458', 'vinaphone', 'assets/vinaphone_logo.jpg', ['088', '091', '094']),
   ];
 
-  Stream<FengShuiNumberQuality?> get qualityStream => _qualitySubject.stream;
-  Sink<FengShuiNumberQuality?> get qualitySink => _qualitySubject.sink;
+  List<MobileNetworkEntity>? _mobileNetworksFromRepository;
+
+  Stream<dynamic> get readyStream => _onReadySubject.stream;
+  Sink<dynamic> get readySink => _onReadySubject.sink;
 
   Stream<String?> get phoneStream =>
-      _phoneStatusSubject.stream.transform(_phoneValidation);
-  Sink<String?> get phoneSink {
-    // print('_phoneStatusSubject.value : ${_phoneStatusSubject.valueOrNull}');
-    // if (_phoneStatusSubject.hasValue) {
-    //   final validateResult = Helper.validate(_phoneStatusSubject.value, mobileNetworks);
-    //   if (validateResult != null) {
-    //     return _phoneStatusSubject.sink;
-    //   } else {
-    //     return _qualitySubject.sink;
-    //   }
-    // }
-    return _phoneStatusSubject.sink;
-  }
+      _phoneStatusSubject.stream;
+  Sink<String?> get phoneSink => _phoneStatusSubject.sink;
 
   Stream<bool> get btnStream => _btnSubject.stream;
   Sink<bool> get btnSink => _btnSubject.sink;
@@ -42,12 +34,6 @@ class HomeViewModel {
   Stream<MobileNetworkEntity?> get networkStream =>
           _networkSubject.stream.transform(_networkValidation);
   Sink<String> get networkSink => _networkSubject.sink;
-
-  StreamTransformer<String, String?> _phoneValidation = StreamTransformer<String, String?>.fromHandlers(
-    handleData: (data, sink) {
-      sink.add(Helper.validate(data, mobileNetworks));
-    }
-  );
 
   StreamTransformer<String, MobileNetworkEntity?> _networkValidation
       = StreamTransformer<String, MobileNetworkEntity?>.fromHandlers(
@@ -85,32 +71,38 @@ class HomeViewModel {
         }
       }
     }
-    print('MESSAGE : ${numberQuality.message}');
-    qualitySink.add(numberQuality);
-  }
-
-  void resetStatusQualify() {
-    qualitySink.add(null);
+    readySink.add(numberQuality);
   }
 
   HomeViewModel() {
-    Rx.combineLatest2(_phoneStatusSubject, _networkSubject, (phone, network) {
-      return Helper.validate(phone.toString(), mobileNetworks) != null
-          || phone.toString().length <= 3 ? false : true;
-    }).listen((enable) {
-      btnSink.add(enable);
+    initData();
+    _phoneStatusSubject.stream.listen((value) {
+      dynamic firstValidate = Helper.validate(value, _mobileNetworksFromRepository!);
+      readySink.add(firstValidate);
+      if (firstValidate == null) {
+        btnSink.add(true);
+      } else {
+        btnSink.add(false);
+      }
+      networkSink.add(value);
     });
   }
 
+  initData() async {
+    print('INIT DATA');
+    this._mobileNetworksFromRepository = await _fengShuiRepository.getMobileNetworks();
+  }
+
   dispose() {
+    _onReadySubject.drain();
+    _onReadySubject.close();
+
     _phoneStatusSubject.drain();
     _phoneStatusSubject.close();
     _btnSubject.drain();
     _btnSubject.close();
     _networkSubject.drain();
     _networkSubject.close();
-    _qualitySubject.drain();
-    _qualitySubject.close();
   }
 
 }
