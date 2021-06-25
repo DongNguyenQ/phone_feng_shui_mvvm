@@ -8,10 +8,8 @@ class Helper {
       if (!isNumeric(phone))
         return 'Please input just number';
 
-      MobileNetworkEntity? foundNetwork;
-      for (var phoneNetwork in mobileNetworks)
-        foundNetwork = findMatchMobileNetwork(phone, phoneNetwork);
-
+      MobileNetworkEntity? foundNetwork =
+          findMatchMobileNetworkInListNetwork(phone, mobileNetworks);
       if (foundNetwork == null)
         return 'Not found mobile network, please correct phone number';
       if (phone.length < 10)
@@ -46,6 +44,16 @@ class Helper {
     return null;
   }
 
+  static bool findMatchNumberInAList(String number, List<String> numbers) {
+    bool isMatch = false;
+    for (var num in numbers) {
+      if (number == num) {
+        isMatch = true;
+      }
+    }
+    return isMatch;
+  }
+
   static List<String> trimAllAList(List<String> list) {
     List<String> converted = [];
     for (var element in list) {
@@ -54,15 +62,12 @@ class Helper {
     return converted;
   }
 
-  static FengShuiNumberQuality validateQualityFengShuiNumber(
+  static FengShuiNumberQuality validateTabooNumber(
       String phone, List<String> fengShuiNumbers) {
     FengShuiNumberQuality result = new FengShuiNumberQuality(
         true, message: '$phone is good feng shui number.', phone: phone);
     if (fengShuiNumbers != null) {
       for (var number in fengShuiNumbers) {
-        print('phone.substring(phone.length - 2) : ${phone.substring(phone.length - 2)}');
-        print('Number : $number');
-        print('IS MATCH : ${number == phone.substring(phone.length - 2)}');
         if (number == phone.substring(phone.length - 2)) {
           result.message = 'Bad fend shui number.';
           result.isGood = false;
@@ -71,6 +76,15 @@ class Helper {
       }
     }
     return result;
+  }
+
+  static int calculateTotalOfAString(String numbers) {
+    int total = 0;
+    numbers.runes.forEach((int rune) {
+      var character = new String.fromCharCode(rune);
+      total += int.parse(character);
+    });
+    return total;
   }
 
   static makePhoneCall(String phone) {

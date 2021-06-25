@@ -10,7 +10,7 @@ class MobileNetworkEntity {
       : id = json['id'],
         name = json['name'],
         logo = json['logo'],
-        detector = json['detector'];
+        detector = new List<String>.from(json['detector']);
 
   Map<String, dynamic> toJson() => {
     'id': id,

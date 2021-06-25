@@ -23,7 +23,7 @@ class HomeViewModel {
 
   Stream<String?> get phoneStream =>
       _phoneStatusSubject.stream.transform(_phoneValidation);
-  Sink<String> get phoneSink {
+  Sink<String?> get phoneSink {
     // print('_phoneStatusSubject.value : ${_phoneStatusSubject.valueOrNull}');
     // if (_phoneStatusSubject.hasValue) {
     //   final validateResult = Helper.validate(_phoneStatusSubject.value, mobileNetworks);
@@ -42,7 +42,6 @@ class HomeViewModel {
   Stream<MobileNetworkEntity?> get networkStream =>
           _networkSubject.stream.transform(_networkValidation);
   Sink<String> get networkSink => _networkSubject.sink;
-  // Sink<MobileNetworkEntity?> get networkSinkObject => _networkSubject.sink;
 
   StreamTransformer<String, String?> _phoneValidation = StreamTransformer<String, String?>.fromHandlers(
     handleData: (data, sink) {
@@ -59,15 +58,36 @@ class HomeViewModel {
 
   Future<void> qualifyPhone(String phone) async {
     final data = await _fengShuiRepository.getFengShuiNumbers();
-    final result = Helper.validateQualityFengShuiNumber(phone, data);
+    FengShuiNumberQuality result = Helper.validateTabooNumber(phone, data);
+    if (result.isGood) {
+      final caculatedNumber =
+          Helper.calculateTotalOfAString(phone.substring(0, 5)) /
+              Helper.calculateTotalOfAString(phone.substring(5));
+      print('phone.substring(5) : ${phone.substring(5)} : '
+          '${Helper.calculateTotalOfAString(phone.substring(0, 5))}');
+      print('phone.substring(0, 5) : ${phone.substring(0, 5)} : '
+          '${Helper.calculateTotalOfAString(phone.substring(5))}');
+      if (caculatedNumber == 24/29 || caculatedNumber == 24/28) {
+        final nicePairs = await _fengShuiRepository.getNicePairNumbers();
+        final compareNumber = phone.substring(phone.length - 2);
+        final isFound = Helper.findMatchNumberInAList(compareNumber, nicePairs);
+        if (!isFound) {
+          result.isGood = false;
+          result.message = 'Not match any nice pair : $nicePairs';
+        }
+      } else {
+        result.isGood = false;
+        result.message = 'First 5 devide last 5 not equal 24/29 or 24/28';
+      }
+    }
     qualitySink.add(result);
   }
 
-  Future<void> findMobileNetwork(String phone) async {
-    final networks = await _fengShuiRepository.getMobileNetworks();
-    final result = Helper.findMatchMobileNetworkInListNetwork(phone, networks);
-
-  }
+  // Future<void> findMobileNetwork(String phone) async {
+  //   final networks = await _fengShuiRepository.getMobileNetworks();
+  //   final result = Helper.findMatchMobileNetworkInListNetwork(phone, networks);
+  //
+  // }
 
   void resetStatusQualify() {
     qualitySink.add(null);
