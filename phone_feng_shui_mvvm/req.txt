@@ -1,0 +1,36 @@
+B. Language: Flutter is preferred.
+C. Output:
+	- Source code is compressed in .rar file
+	- The testing result is captured and written in a .docx file
+D. Requirement: Create a flutter app that meets the following requirements
+1. A textbox to input mobile phone: 
+- Input number only [x]
+- Limit at 10 num chars [x]
+- Match with 1 in 3  mobile networks
++ Viettel:  086xxx, 096xxx, 097xxx
++ Mobile: 089xxx, 090xxx, 093xxx
++ Vinaphone: 088xxx, 091xxx, 094xxx
+- Show error messing if the user inputs a number wrong format, or not match with 1 in 3 mobile networks above.
+- Display mobile network logo of the mobile phone number that is inputted in textbox above
+
+2. A button to check Feng shui number
+- When click the button, get the taboo number list from the JSON file in assets of the project.
+- Taboo number includes the following numbers below
+		00, 66
+		04, 45, 85, 27, 67
+		17, 57, 97, 98, 58
+		42, 82
+		69
+- Check the last 2 num chars are taboo: if its rule is violated, display a red text with content is 'Bad fend shui number.' 
+
+- Good feng shui numbers: match all criteria below:
++ Total first 5 nums / Total last 5 nums: matches 1 in 2 conditions: 24/29 or 24/28
++ Last nice pair of numbers: 19, 24, 26, 37, 34
+- If the phone number is good feng shui numbers, display a green text with the content is 'xxx is good fend shui number.' (xxx is phone number)
+- User can click phone number on the green text above to call.
+
+3. Required for Sr. level
+- Organize source code in good structure.
+- API to get mock data, mock data can be stored in .txt file.
+- Network, rules can be flexible (added/updated/removed).
+- Web design pattern should be applied.
