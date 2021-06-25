@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:phone_feng_shui_mvvm/model/feng_shui_number_quality.dart';
 import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
+import 'package:phone_feng_shui_mvvm/service_locator.dart';
 import 'package:phone_feng_shui_mvvm/utils/helper.dart';
 import 'package:phone_feng_shui_mvvm/view/widget/custom_input_view.dart';
 import 'package:phone_feng_shui_mvvm/viewmodel/home_viewmodel.dart';
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _homeViewModel = HomeViewModel();
+    _homeViewModel = locator<HomeViewModel>();
     _controller = TextEditingController();
     _controller.addListener(() {
       if(_controller.text.isNotEmpty) {

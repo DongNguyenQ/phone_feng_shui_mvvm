@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:phone_feng_shui_mvvm/model/feng_shui_number_quality.dart';
 import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
 import 'package:phone_feng_shui_mvvm/repository/feng_shui_repository.dart';
+import 'package:phone_feng_shui_mvvm/repository/service/local/local_service.dart';
+import 'package:phone_feng_shui_mvvm/service_locator.dart';
 import 'package:phone_feng_shui_mvvm/utils/helper.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -12,7 +14,7 @@ class HomeViewModel {
   final _phoneStatusSubject = BehaviorSubject<String>();
   final _btnSubject = BehaviorSubject<bool>();
   final _networkSubject = BehaviorSubject<MobileNetworkEntity?>();
-  final _fengShuiRepository = FengShuiRepository();
+  final _fengShuiRepository = locator<FengShuiRepository>();
 
   List<MobileNetworkEntity>? _mobileNetworksFromRepository;
 

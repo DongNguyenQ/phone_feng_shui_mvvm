@@ -2,7 +2,10 @@ import 'package:phone_feng_shui_mvvm/repository/service/local/local_service.dart
 import 'package:phone_feng_shui_mvvm/model/mobile_network_entity.dart';
 
 class FengShuiRepository {
-  LocalService _localService = new LocalService();
+  LocalService _localService;
+
+  FengShuiRepository(this._localService);
+
   final _fengShuiFilePath = 'assets/res/taboo_numbers.txt';
   final _mobileNetworkFilePath = 'assets/res/mobile_network.json';
   final _nicePairsNumberFilePath = 'assets/res/nice_pair_numbers.txt';
