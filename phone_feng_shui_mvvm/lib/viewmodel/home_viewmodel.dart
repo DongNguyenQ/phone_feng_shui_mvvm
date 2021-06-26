@@ -85,7 +85,6 @@ class HomeViewModel {
   }
 
   initData() async {
-    print('INIT DATA');
     this._mobileNetworksFromRepository = await _fengShuiRepository.getMobileNetworks();
   }
 

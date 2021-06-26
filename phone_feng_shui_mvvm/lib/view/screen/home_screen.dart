@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
+              Text('Feng Shui Validation', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
+              SizedBox(height: 30,),
               StreamBuilder<String?>(
                 stream: _homeViewModel.phoneStream,
                 builder: (context, snapshot) {

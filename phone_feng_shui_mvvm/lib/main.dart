@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phone_feng_shui_mvvm/service_locator.dart';
 import 'package:phone_feng_shui_mvvm/view/screen/home_screen.dart';
-
+// Re test network render
 void main() {
   setupLocator();
   runApp(MyApp());
